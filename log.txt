@@ -1,0 +1,33 @@
+Structure of the Project
+
+1. source.py
+Identify the missing reports and add them manually
+Combine a final list of programs and corresponding report only using ..
+.. three sources:
+(a) the ROC base sample.xlsx list
+(b) CH's report
+(c) web's report
+
+-----> ROC_SR_source.xlsx
+
+2. create_pagedf.py
+Check through the pages (used the following modules):
+...
+The output is an df with pages as unique id (file + page) and two more column infor:
+(a) account
+(b) BOP/GFN
+
+-----> index.xlsx
+
+3. output.py (coding deprecated temporarily)
+see inside
+
+==========================
+(1) 基于index制作最终表格 + 首页
+(2) 查漏
+-- 更新index
+-- 运行导出page的自动化代码
+-- 再刷新index
+excel点击导出函数分拆：做一个导出一个文件的，基于index（手动更新后的）
+
+This makes more sense for adding another round human check step!
