@@ -1,6 +1,6 @@
 import xlwings as xw
 
-def copy_move_tab(sourcefile, targetfile, sourcetab, targettab):
+def copy_move_tab(sourcefile, sourcetab, targettab, targetfile=None, targetwb=None):
     """
     Copies a tab from a source Excel file to a target Excel file.
 
@@ -16,7 +16,10 @@ def copy_move_tab(sourcefile, targetfile, sourcetab, targettab):
 
     # Open the source and target Excel workbooks
     wb_source = xw.Book(sourcefile)
-    wb_target = xw.Book(targetfile)
+    if targetwb:
+        wb_target = targetwb
+    else:
+        wb_target = xw.Book(targetfile)
 
     # Select the tab to copy from the source workbook
     sheet_to_copy = wb_source.sheets[sourcetab]
@@ -30,5 +33,5 @@ def copy_move_tab(sourcefile, targetfile, sourcetab, targettab):
 
     # Save and close the target workbook
     wb_target.save()
-    wb_target.close()
+    # wb_target.close()
 
