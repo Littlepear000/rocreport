@@ -41,6 +41,7 @@ def create_page_df(export=None):
         d.to_excel(folder_external_financing + r'\index.xlsx')
     return d
 
+
 # if pdf:
 #     path_extractpdf = os.path.join(folder_extractpdf, filename.replace('.pdf', ' ') + pgnum_gfn + '.pdf')
 #     if pgnum_gfn != '-999':

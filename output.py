@@ -47,7 +47,7 @@ def extract_excel(path_rawpdf, pgnum_gfn, folder_extractpdf, outid):
 
 # 3. consolidated 2 excels (using results from 2)
 # Remember to create tables first
-def index_create():
+def final_indexpage_create():
     # initiate
     shutil.copy(prgt18_init, prgt18_final)
     shutil.copy(gra18_init, gra18_final)
