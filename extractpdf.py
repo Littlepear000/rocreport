@@ -50,6 +50,7 @@ def export_1page(path_rawpdf, pgnum, folder_extractpdf):
         # time.sleep(2)
         # pyautogui.press('backspace')
         # time.sleep(2)
+        time.sleep(3)
         pyautogui.doubleClick(pos_pagenum)
         time.sleep(2)
         pyautogui.write(pgnum)

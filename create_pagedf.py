@@ -7,7 +7,7 @@ import os
 from source import process_interim
 
 folder_rawpdf = r'C:\Users\xli7\International Monetary Fund (PRD)\SPR-Prolonged UFR - Documents\General\Data\ROC\Staff Reports Mining'
-folder_extractpdf_root = r'C:\Users\xli7\International Monetary Fund (PRD)\SPR-Prolonged UFR - Documents\General\Data\ROC\Staff Reports Mining\external financing table file'
+folder_external_financing = r'C:\Users\xli7\International Monetary Fund (PRD)\SPR-Prolonged UFR - Documents\General\Data\ROC\Staff Reports Mining\external financing table file'
 folder_savexl_root = r'C:\Users\xli7\International Monetary Fund (PRD)\SPR-Prolonged UFR - Documents\General\Data\ROC\Staff Reports Mining\external financing table file'
 pagelist_gfn = {}
 pagelist_bop = {}
@@ -17,6 +17,7 @@ folders = {'2018gra': '\ROC2018\GRA',
 def create_page_df(export=None):
     for index, row in process_interim().inlist('roc2018','GRA','PRGT').iterrows():
         file = row['path']
+        print(file)
         # gfn dictionary
         pgnum_gfn = str(getpage_gfn(file)[0])
         pagelist_gfn[row['srid']] = pgnum_gfn
@@ -28,14 +29,16 @@ def create_page_df(export=None):
     # Create the unioned new dataframe:
     # 1. this dataframe's id = srid + page number
     dfpagelist_gfn = pd.DataFrame({'srid': pagelist_gfn.keys(), 'pg': pagelist_gfn.values()})
+    dfpagelist_gfn['Source'] = 'GFN'
     dfpagelist_bop = pd.DataFrame({'srid': pagelist_bop.keys(), 'pg': pagelist_bop.values()})
-    d = pd.concat([dfpagelist_gfn, dfpagelist_bop], ignore_index=True, keys=['gfn', 'bop'])
+    dfpagelist_bop['Source'] = 'BOP'
+    d = pd.concat([dfpagelist_gfn, dfpagelist_bop], ignore_index=True)
 
     data = pwread(folder_rawpdf + r'\ROC_SR_source.xlsx')[0]
     accountmap = data.set_index('srid')['account'].to_dict()
     d['account'] = d.srid.map(accountmap)
     if export:
-        d.to_excel(folder_extractpdf_root + r'\index.xlsx')
+        d.to_excel(folder_external_financing + r'\index.xlsx')
     return d
 
 # if pdf:

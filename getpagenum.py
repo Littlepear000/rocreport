@@ -11,7 +11,7 @@ gfn_key2 = ["External Financing", "Gross Financing"]
 gfn_key3 = ["Requirement", "Need"]
 bop_key1 = ['Table']
 bop_key2 = ['Balance of Payments', 'Balance Of Payments']
-bop_key3 = ['Dollar', 'dollar', '$']
+bop_key3 = ['Dollar', 'dollar', '$', 'million', 'billion']
 
 def getpage_gfn(path_rawpdf):
     pattern = r'\d{3}_\d{3}'

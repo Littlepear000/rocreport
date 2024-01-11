@@ -21,19 +21,13 @@ pos_save_path = (518, 150)
 pos_close = (3413, 13)
 
 
-def pdf2xl(extractpdf_path, savexl_path):
-    pattern = r'\d{3}_\d{3} \d*'
-    fileid = re.findall(pattern, extractpdf_path)
-    if fileid:
-        file_path = os.path.join(savexl_path, fileid[0] + '.xlsx')
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        else:
-            print(f"The file {file_path} does not exist.")
-    else:
-        print("No valid file id found in the path.")
+def pdf2xl(fileid, savexl_path):
+    input = os.path.join(savexl_path, fileid + '.pdf')
+    output = os.path.join(savexl_path, fileid + '.xlsx')
+    if os.path.exists(output):
+        os.remove(output)
 
-    os.startfile(extractpdf_path)
+    os.startfile(input)
     time.sleep(2)
     window_title = 'Adobe Acrobat Standard'
     try:
@@ -62,5 +56,6 @@ def pdf2xl(extractpdf_path, savexl_path):
         pyautogui.press('enter')
         time.sleep(2)
         pyautogui.click(pos_close)
+        time.sleep(2)
     except IndexError:
         print("No window find")
