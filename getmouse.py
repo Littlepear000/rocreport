@@ -6,5 +6,3 @@ def p(s=5):
     time.sleep(s)
     pos = pyautogui.position()
     print(pos)
-
-p(8)

@@ -109,5 +109,5 @@ def consolidate(addmore=False):
 
 
 if __name__ == '__main__':
-    index_create()
+    final_indexpage_create()
     consolidate()

@@ -2,7 +2,7 @@ from swxl.openpyxlpro.core import offset
 from swxl.pandaspro.core import pwread
 import pandas as pd
 import xlwings as xw
-from source import process_interim
+from roc_pdf2xl.meta_raw.source import process_interim
 
 template_cell = {
     'CA account deficit (US$)': 'G5',
@@ -47,7 +47,7 @@ currency_dict = {
     'CNY': 7
 }
 
-manual = r'C:\Users\xli7\International Monetary Fund (PRD)\SPR-Prolonged UFR - Documents\General\Data\ROC\Staff Reports Mining\external financing table file\final\config\manual_info.xlsx'
+manual = './roc_pdf2xl/manual_info.xlsx'
 manual_data = pwread(manual)[0].set_index('index')
 
 def getcell(wb, arrid, year, term, term_dict, manual_data):
@@ -95,9 +95,11 @@ def currency_exchange(source, arrid):
     else:
         return manual_data.at[f'{source}_currency', str(arrid)]
 
-def fillmaria(type='PRGT'):
-    file = r'C:\Users\xli7\International Monetary Fund (PRD)\SPR-Prolonged UFR - Documents\General\Data\ROC\Staff Reports Mining\external financing table file\final' + f'/ROC2018_{type}.xlsx'
-    wb = xw.Book(file)
+def fillmaria(type='PRGT', file='end'):
+    baseline = f'./roc_pdf2xl/baseline/ROC2018_{type}.xlsx'
+    endline = f'./roc_pdf2xl/e_ROC2018_{type}.xlsx'
+    usefile = baseline if file == 'base' else endline
+    wb = xw.Book(usefile)
 
     flags = {}
     count = 1
@@ -129,8 +131,7 @@ def fillmaria(type='PRGT'):
             flags[arrid].append(unit_info)
 
         ## Flag 2: Currency
-        if ((not pd.isnull(currency_exchange('BOP', arrid))) or (not pd.isnull(currency_exchange('GFN', arrid)))) \
-                and currency_exchange('BOP', arrid) != currency_exchange('GFN', arrid):
+        if currency_exchange('BOP', arrid) == 'flag' or currency_exchange('GFN', arrid) == 'flag':
             currency_info = 'Currency flag: ' + f"BOP - {currency_exchange('BOP', arrid)}, " +  f"GFN - {currency_exchange('GFN', arrid)}"
             flags[arrid].append(currency_info)
 
@@ -143,18 +144,20 @@ def fillmaria(type='PRGT'):
             ## Flag 3: SR row/column not found
                 if cell == "not found":
                     cell_info = f"{t} not found in SR"
-                    flags[arrid].append(cell_info)
+                    # flags[arrid].append(cell_info)
                 else:
                     # Decide about the adjustor
-                    negative_adj = '-' if t in ['CA account deficit (US$)'] else ''
+                    negative_adj = '-' if t in ['CA account deficit (US$)', 'Capital account (US$)', 'Financial accounts (US$)','Reserve accumulation (US$)'] and cell[0]!= '-' else ''
                     unit_adj = ''
                     currency_adj = ''
 
                     if unit_bool(source, arrid) == 'millions':
-                        unit_adj = '/1000'
+                        # unit_adj = '/1000'
+                        unit_adj = ''
                     if currency_exchange(source, arrid) != 'Default USD':
                         try:
-                            currency_adj = f'/{currency_dict[currency_exchange(source, arrid)]}'
+                            # currency_adj = f'/{currency_dict[currency_exchange(source, arrid)]}'
+                            currency_adj = ''
                         except:
                             currency_adj = ''
 
@@ -162,6 +165,7 @@ def fillmaria(type='PRGT'):
                         unit_adj = ''
                         currency_adj = ''
 
+                    cell = cell.replace('-','')
                     ws.range(template_cell[t]).value = f"={negative_adj}'{arrid}_{source}'!{cell}" + unit_adj + currency_adj
                     if t not in ['Exceptional financing (US$)', 'IMF', 'Other IFIs', 'Bilaterals', 'Others']:
                         ws.range(offset(template_cell[t], 0,-1)).value = f"={negative_adj}'{arrid}_{source}'!{offset(cell, 0, -1)}" + unit_adj + currency_adj
@@ -178,14 +182,7 @@ def fillmaria(type='PRGT'):
     # row = ws.api.UsedRange.Find('Current account balance', LookIn=-4163).Address.split('$')[2]
 
 
-special_log = '''
-682 GFN create 17
-754 unmerge H and I column
-
-'''
-
 if __name__ == '__main__':
-    a = fillmaria('GRA')
-    b = fillmaria()
+    a = fillmaria('PRGT', 'end')
 
 
